@@ -79,17 +79,6 @@ public abstract class AbstractDeployment {
      */
     protected AbstractDeployment(SwitchYardModel configModel) {
         _switchyardConfig = configModel;
-
-        // initialize deployment name
-        if (getConfig() != null) {
-            _name = getConfig().getQName();
-            if (_name == null) {
-                // initialize to composite name if config name is missing
-                if (getConfig().getComposite() != null) {
-                    _name = getConfig().getComposite().getQName();
-                }
-            }
-        }
     }
 
     /**
@@ -128,6 +117,8 @@ public abstract class AbstractDeployment {
             throw new IllegalArgumentException("null 'appServiceDomain' argument.");
         }
         
+        initName();
+        
         _serviceDomain = appServiceDomain;
         _serviceDomain.setProperty(CLASSLOADER_PROPERTY, Classes.getTCCL());
         _transformerRegistryLoader = new TransformerRegistryLoader(appServiceDomain.getTransformerRegistry());
@@ -137,6 +128,26 @@ public abstract class AbstractDeployment {
         _validatorRegistryLoader.loadOOTBValidates();
         
         doInit(activators);
+    }
+
+    /**
+     * Initialises the deployment name.
+     */
+    public final void initName() {
+    	if (_name != null) {
+    		return;
+    	}
+    	
+        // initialize deployment name
+        if (getConfig() != null) {
+            _name = getConfig().getQName();
+            if (_name == null) {
+                // initialize to composite name if config name is missing
+                if (getConfig().getComposite() != null) {
+                    _name = getConfig().getComposite().getQName();
+                }
+            }
+        }
     }
 
 
